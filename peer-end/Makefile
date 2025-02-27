@@ -9,7 +9,8 @@ BUILD_DIR = build
 
 # Source Files (Common files for both server and client)
 COMMON_SRC_FILES = $(SRC_DIR)/network.c \
-                   $(SRC_DIR)/utils.c  # Add utils.c if needed
+                   $(SRC_DIR)/utils.c \
+									 $(SRC_DIR)/file_transfer.c
 
 # Header files for Dependency Tracking
 DEPS = $(INCLUDE_DIR)/peer.h \

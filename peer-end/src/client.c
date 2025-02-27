@@ -2,6 +2,7 @@
 #include<unistd.h>
 #include<stdlib.h>
 #include "network.h"
+#include "file_transfer.h"
 
 int main(){
   int port = 8080; // Using this port for communication.
@@ -10,7 +11,13 @@ int main(){
   // Connect to server 
   int sockFd = connect_to_peer(server_ip, port);
 
+  if(sockFd < 0){
+    perror("Error Connecting to the server");
+    return -1;
+  }
+
   printf("Connected to the server...");
+  send_file(sockFd, "./test_file.txt");
 
   // Close the Connection
   close(sockFd);
