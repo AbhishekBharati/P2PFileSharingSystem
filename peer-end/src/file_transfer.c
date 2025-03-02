@@ -7,23 +7,28 @@ int send_file(int socket, const char *filename){
         return -1;
     } 
 
-  char buffer[CHUNK_SIZE];
+  struct stat file_stat;
+  if(stat(filename, &file_stat) < 0){
+    perror("Error getting the file size");
+    fclose(file);
+    return -1;
+  }
+
+  long file_size = file_stat.st_size;
+
+  // Sending the fileSize to the receiver First :-
+  send(socket, &file_size, sizeof(file_size), 0);
+
+  char buffer[1024];
   size_t bytes_read;
 
   while((bytes_read = fread(buffer, 1, CHUNK_SIZE, file)) > 0){
-    printf("📝 Sending chunk (%ld bytes):\n%.*s\n", bytes_read, (int)bytes_read, buffer);
-    printf("📝 fread() read %ld bytes before sending.\n", bytes_read);
-
-
     if(send(socket, buffer, bytes_read, 0) < 0){
       perror("Error Sending the file");
       fclose(file);
       return -1;
     }
   }
-
-  // Send EOF signal to indicate end of the transfer :-
-  send(socket, "EOF", 3, 0);
 
   fclose(file);
   printf("File %s sent successfully!\n", filename);
@@ -37,33 +42,33 @@ int receive_file(int socket, const char *destination_filename){
     return -1;
   }
 
+  long file_size;
+  recv(socket, &file_size, sizeof(file_size), 0);
+  printf("Receiving File... Expected Size : %ld bytes \n", file_size);
+
   char buffer[CHUNK_SIZE];
+  long total_received = 0;
   ssize_t bytes_received;
 
+
   // Receive File in Chunks :-
-  while(1) {
+  while(total_received < file_size) {
     bytes_received = recv(socket, buffer, CHUNK_SIZE, 0);
     
     if(bytes_received == 0){
       printf("Connection closed by sender File Transfer Complete... \n");
       break;
     }
+
     if(bytes_received < 0){
       perror("Error Receiving File...");
       fclose(file);
       return -1;
     }
 
-      buffer[bytes_received] = '\0';  // Null-terminate for debugging
-      printf("📝 Received chunk (%ld bytes):\n%.*s\n", bytes_received, (int)bytes_received, buffer);
-
-
-    // Check the EOF Signal :-
-    if(bytes_received == 3 && strncmp(buffer, "EOF", 3) == 0){
-      break;
-    }
-
     fwrite(buffer, 1, bytes_received, file);
+    total_received += bytes_received;
+    printf("Received %ld/%ld bytes...", total_received, file_size);
   }
 
   fclose(file);

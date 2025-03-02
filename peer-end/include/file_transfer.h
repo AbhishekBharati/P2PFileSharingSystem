@@ -6,6 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <sys/stat.h>
 
 #define CHUNK_SIZE 1024 // 1 KB chunk size
 
