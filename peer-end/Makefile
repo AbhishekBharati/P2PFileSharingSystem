@@ -10,7 +10,8 @@ BUILD_DIR = build
 # Source Files (Common files for both server and client)
 COMMON_SRC_FILES = $(SRC_DIR)/network.c \
                    $(SRC_DIR)/utils.c \
-									 $(SRC_DIR)/file_transfer.c
+                   $(SRC_DIR)/file_transfer.c \
+                   $(SRC_DIR)/main.c  # Include main.c
 
 # Header files for Dependency Tracking
 DEPS = $(INCLUDE_DIR)/peer.h \
@@ -25,25 +26,14 @@ DEPS = $(INCLUDE_DIR)/peer.h \
 COMMON_OBJ_FILES = $(COMMON_SRC_FILES:.c=.o)
 
 # Output Executable
-EXEC = $(BUILD_DIR)/P2PFileSharing
+EXEC = $(BUILD_DIR)/P2PFileSharing  # Single executable for both client & server
 
-# Additional Executables for server and client
-SERVER_SRC = $(SRC_DIR)/server.c
-CLIENT_SRC = $(SRC_DIR)/client.c
+# Default target to build the executable
+all: $(EXEC)
 
-SERVER_EXEC = $(BUILD_DIR)/P2PFileServer
-CLIENT_EXEC = $(BUILD_DIR)/P2PFileClient
-
-# Default target to build the executables
-all: $(SERVER_EXEC) $(CLIENT_EXEC)
-
-# Rule to create the server executable (server only gets its main function)
-$(SERVER_EXEC): $(SRC_DIR)/server.o $(COMMON_OBJ_FILES)
-	$(CC) $(CFLAGS) -o $(SERVER_EXEC) $(SRC_DIR)/server.o $(COMMON_OBJ_FILES)
-
-# Rule to create the client executable (client gets main from main.c)
-$(CLIENT_EXEC): $(SRC_DIR)/client.o $(COMMON_OBJ_FILES)
-	$(CC) $(CFLAGS) -o $(CLIENT_EXEC) $(SRC_DIR)/client.o $(COMMON_OBJ_FILES)
+# Rule to create the executable
+$(EXEC): $(COMMON_OBJ_FILES)
+	$(CC) $(CFLAGS) -o $(EXEC) $(COMMON_OBJ_FILES)
 
 # Rule to compile .c files to .o files
 %.o: %.c $(DEPS)
@@ -51,7 +41,7 @@ $(CLIENT_EXEC): $(SRC_DIR)/client.o $(COMMON_OBJ_FILES)
 
 # Clean object files and executable
 clean:
-	rm -rf $(COMMON_OBJ_FILES) $(EXEC) $(SERVER_EXEC) $(CLIENT_EXEC)
+	rm -rf $(COMMON_OBJ_FILES) $(EXEC)
 
 # Rule to remove all build files (including the build directory)
 distclean: clean
