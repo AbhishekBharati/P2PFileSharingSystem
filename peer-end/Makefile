@@ -11,6 +11,7 @@ BUILD_DIR = build
 COMMON_SRC_FILES = $(SRC_DIR)/network.c \
                    $(SRC_DIR)/utils.c \
                    $(SRC_DIR)/file_transfer.c \
+									 $(SRC_DIR)/tracker_client.c \
                    $(SRC_DIR)/main.c  # Include main.c
 
 # Header files for Dependency Tracking
@@ -20,7 +21,8 @@ DEPS = $(INCLUDE_DIR)/peer.h \
        $(INCLUDE_DIR)/encryption.h \
        $(INCLUDE_DIR)/auth.h \
        $(INCLUDE_DIR)/utils.h \
-       $(INCLUDE_DIR)/file_utils.h
+			 $(INCLUDE_DIR)/tracker_client.h \
+       $(INCLUDE_DIR)/file_utils.h 
 
 # Object files (Generated from source files)
 COMMON_OBJ_FILES = $(COMMON_SRC_FILES:.c=.o)
