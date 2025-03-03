@@ -68,7 +68,8 @@ int connect_to_peer(const char *ip, int port){
 
   // Connect to Peer :-
   if(connect(sockFd, (struct sockaddr *)&peer_addr, sizeof(peer_addr)) < 0){
-    handle_error("Error Connecting to peer");
+    perror("Connection Failed...\n");
+    return -1;
   }
   printf("Connected to the peer %s : %d\n", ip, port);
   return sockFd;

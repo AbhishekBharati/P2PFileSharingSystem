@@ -4,8 +4,7 @@
 #include "network.h"
 #include "file_transfer.h"
 
-void run_server() {
-    int port = 8080;
+void run_server(int port) {
     int server_sock = initialize_network();
     bind_socket(server_sock, port);
     start_listening(server_sock);
@@ -42,6 +41,7 @@ void run_client() {
 
     int sockFd = connect_to_peer(server_ip, port);
     if (sockFd < 0) {
+    printf("Code Broke");
         perror("❌ Error Connecting to the peer...");
         return;
     }
@@ -91,7 +91,7 @@ int main() {
         scanf("%d", &choice);
 
         if (choice == 1) {
-            run_server();
+            run_server(peer_port);
         } 
         else if (choice == 2) {
             run_client();
